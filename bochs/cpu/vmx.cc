@@ -2438,8 +2438,10 @@ void BX_CPU_C::VMexitSaveGuestState(void)
         interruptibility_state |= BX_VMX_INTERRUPTS_BLOCKED_BY_STI;
   }
 
-  if (is_masked_event(BX_EVENT_SMI))
-    interruptibility_state |= BX_VMX_INTERRUPTS_BLOCKED_SMI_BLOCKED;
+  // Do not set BX_VMX_INTERRUPTS_BLOCKED_SMI_BLOCKED (as the dual-monitor
+  // treatment is unimplemented).
+  // "VM exits that end outside system-management mode (SMM) save bit 2 (blocking by SMI)
+  //  as 0 regardless of the state of such blocking before the VM exit."
   
   if (vm->vmexec_ctrls1 & VMX_VM_EXEC_CTRL1_VIRTUAL_NMI) {
     if (is_masked_event(BX_EVENT_VMX_VIRTUAL_NMI))
@@ -2454,7 +2456,7 @@ void BX_CPU_C::VMexitSaveGuestState(void)
 
 #if BX_SUPPORT_VMX >= 2
   if (VMX_MSR_MISC & VMX_MISC_STORE_LMA_TO_X86_64_GUEST_VMENTRY_CONTROL) {
-    // VMEXITs store the value of EFER.LMA into the “x86-64 guest" VMENTRY control
+    // VMEXITs store the value of EFER.LMA into the x86-64 guest VMENTRY control
     // must be set if unrestricted guest is supported
     if (long_mode())
        vm->vmentry_ctrls |=  VMX_VMENTRY_CTRL1_X86_64_GUEST;
