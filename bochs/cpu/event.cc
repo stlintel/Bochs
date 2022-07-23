@@ -231,6 +231,7 @@ bool BX_CPU_C::handleAsyncEvent(void)
   }
 
   if (is_unmasked_event_pending(BX_EVENT_INIT) && SVM_GIF) {
+    clear_event(BX_EVENT_INIT);
 #if BX_SUPPORT_SVM
     if (BX_CPU_THIS_PTR in_svm_guest) {
       if (SVM_INTERCEPT(SVM_INTERCEPT0_INIT)) Svm_Vmexit(SVM_VMEXIT_INIT);
@@ -241,7 +242,6 @@ bool BX_CPU_C::handleAsyncEvent(void)
       VMexit(VMX_VMEXIT_INIT, 0);
     }
 #endif
-    // reset will clear pending INIT
     reset(BX_RESET_SOFTWARE);
 
 #if BX_SUPPORT_SMP
