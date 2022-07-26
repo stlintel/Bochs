@@ -16,11 +16,11 @@ jobs:
     - name: configure for release
       run: cd bochs && ./.conf.linux
     - name: make
-      run: make
-    - name: clean
+      run: make -C bochs
+    - name: cleanup
       run: make clean
     - name: configure minimalistic configuration
       run: cd bochs && ./.conf.nothing
     - name: make
-      run: make
+      run: make -C bochs
     
