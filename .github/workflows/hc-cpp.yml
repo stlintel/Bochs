@@ -13,7 +13,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - name: configure
+    - name: cd bochs && .conf.linux
       run: ./configure
     - name: make
       run: make
