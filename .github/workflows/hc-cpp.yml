@@ -23,4 +23,9 @@ jobs:
       run: cd bochs && ./.conf.nothing
     - name: make
       run: make -C bochs
-    
+    - name: cleanup
+      run: make -C bochs all-clean
+    - name: configure maximum possible configuration
+      run: cd bochs && ./.conf.everything
+    - name: make
+      run: make -C bochs
