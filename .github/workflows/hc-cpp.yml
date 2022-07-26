@@ -13,8 +13,14 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - name: configure
+    - name: configure for release
       run: cd bochs && .conf.linux
+    - name: make
+      run: make
+    - name: clean
+      run: make clean
+    - name: configure minimalistic configuration
+      run: cd bochs && .conf.nothing
     - name: make
       run: make
     
