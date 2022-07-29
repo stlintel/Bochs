@@ -648,7 +648,7 @@ int BX_CPU_C::check_entry_PAE(const char *s, Bit64u entry, Bit64u reserved, unsi
   }
 
   if (entry & reserved) {
-    BX_DEBUG(("PAE %s: reserved bit is set 0x" FMT_ADDRX64, s, entry));
+    BX_DEBUG(("PAE %s: reserved bit is set 0x" FMT_ADDRX64 "(reserved: " FMT_ADDRX64 ")", s, entry, entry & reserved));
     return ERROR_RESERVED | ERROR_PROTECTION;
   }
 
