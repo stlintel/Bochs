@@ -2056,7 +2056,8 @@ bx_phy_address BX_CPU_C::translate_guest_physical(bx_phy_address guest_paddr, bx
       combined_access &= entry[leaf];
       vmexit_qualification = access_mask | (combined_access << 3);
       if (SECONDARY_VMEXEC_CONTROL(VMX_VM_EXEC_CTRL3_MBE_CTRL) && (rw == BX_EXECUTE)) {
-        vmexit_qualification &= 0x3f; // reset all bit bits but [5:0]
+        vmexit_qualification &= (0x3f); // reset all bit bits beyond [5:0]
+        vmexit_qualification |= (1<<2); // bit2 indicate the operation was instruction fetch
         if (combined_access & BX_EPT_MBE_USER_EXECUTE)
           vmexit_qualification |= (1<<6);
       }
