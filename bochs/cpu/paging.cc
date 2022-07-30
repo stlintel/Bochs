@@ -2216,7 +2216,7 @@ void dbg_print_paging_pte(int level, Bit64u entry)
 }
 
 #if BX_SUPPORT_VMX >= 2
-void dbg_print_ept_paging_pte(int level, Bit64u entry)
+void dbg_print_ept_paging_pte(int level, Bit64u entry, bool mbe)
 {
   dbg_printf("EPT %4s: 0x%08x%08x", bx_paging_level[level], GET32H(entry), GET32L(entry));
 
@@ -2225,8 +2225,11 @@ void dbg_print_ept_paging_pte(int level, Bit64u entry)
   else
     dbg_printf("   ");
 
+  if (mbe)
+    dbg_printf(" %s", (entry & 0x400) ? "XU" : "xu");
+
   dbg_printf(" %s %s %s",
-    (entry & 0x04) ? "E" : "e",
+    (entry & 0x04) ? "X" : "x",
     (entry & 0x02) ? "W" : "w",
     (entry & 0x01) ? "R" : "r");
 
@@ -2257,7 +2260,7 @@ bool BX_CPU_C::dbg_translate_guest_physical(bx_phy_address guest_paddr, bx_phy_a
     BX_MEM(0)->readPhysicalPage(BX_CPU_THIS, pt_address, 8, &pte);
 #if BX_DEBUGGER
     if (verbose)
-      dbg_print_ept_paging_pte(level, pte);
+      dbg_print_ept_paging_pte(level, pte, SECONDARY_VMEXEC_CONTROL(VMX_VM_EXEC_CTRL3_MBE_CTRL));
 #endif
     switch(pte & 7) {
     case BX_EPT_ENTRY_NOT_PRESENT:
