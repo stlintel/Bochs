@@ -1915,8 +1915,10 @@ bx_phy_address BX_CPU_C::translate_guest_physical(bx_phy_address guest_paddr, bx
   BxMemtype eptptr_memtype = BX_CPU_THIS_PTR cr0.get_CD() ? (BX_MEMTYPE_UC) : BxMemtype(vm->eptptr & 0x7);
 #endif
 
-  Bit32u combined_access = 0x7, access_mask = 0;
   Bit64u offset_mask = BX_CONST64(0x0000ffffffffffff);
+  Bit32u combined_access = 0x7, access_mask = 0;
+  if (SECONDARY_VMEXEC_CONTROL(VMX_VM_EXEC_CTRL3_MBE_CTRL))
+    combined_access |= BX_EPT_MBE_USER_EXECUTE;
 
   BX_DEBUG(("EPT walk for guest paddr 0x" FMT_PHY_ADDRX, guest_paddr));
 
@@ -1973,7 +1975,7 @@ bx_phy_address BX_CPU_C::translate_guest_physical(bx_phy_address guest_paddr, bx
     }
 
     if (curr_entry & PAGING_EPT_RESERVED_BITS) {
-      BX_DEBUG(("EPT %s: reserved bit is set 0x" FMT_ADDRX64, bx_paging_level[leaf], curr_entry));
+      BX_DEBUG(("EPT %s: reserved bit is set 0x" FMT_ADDRX64 "(reserved: " FMT_ADDRX64 ")", bx_paging_level[leaf], curr_entry, curr_entry & PAGING_EPT_RESERVED_BITS));
       vmexit_reason = VMX_VMEXIT_EPT_MISCONFIGURATION;
       break;
     }
